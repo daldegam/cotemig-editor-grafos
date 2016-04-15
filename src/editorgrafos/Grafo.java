@@ -18,23 +18,88 @@ import javax.swing.SwingWorker;
  **/
 public class Grafo extends GrafoBase {
 
-    private boolean visitado[];
+    private Random random = new Random(System.currentTimeMillis());
 
-    public void AGM(int v) {
+    public void doAGM() {
+        int custoTotal = 0;
+        Aresta menorArestaAtual = null;
+        Vertice verticeDeDestinoDaMenorAresta = null;
+        for (int r = 0; r < this.getN(); r++) {
+            for (int i = 0; i < this.getN(); i++) {
+                Vertice vertice = getVertice(i);
+                if (vertice.isChecked() == true) {
 
+                    for (int j = 0; j < this.getN(); j++) {
+                        Aresta aresta = getAresta(i, j);
+                        if (aresta != null && i != j) {
+                            System.out.format("Comparando %s com %s\n", vertice.getRotulo(), getVertice(j).getRotulo());
+                            if (getVertice(j).isChecked() == false
+                                    && (menorArestaAtual == null
+                                    || aresta.getPeso() < menorArestaAtual.getPeso())) {
+                                menorArestaAtual = aresta;
+                                verticeDeDestinoDaMenorAresta = getVertice(j);
+
+                                System.out.format("\tLigou o %s com %s\n", vertice.getRotulo(), getVertice(j).getRotulo());
+                            }
+                        }
+                    }
+
+                    vertice.setChecked(true);
+                    vertice.setCor(Color.red);
+
+                }
+            }
+            if (menorArestaAtual != null) {
+                verticeDeDestinoDaMenorAresta.setChecked(true);
+                verticeDeDestinoDaMenorAresta.setCor(Color.red);
+                custoTotal += menorArestaAtual.getPeso();
+                menorArestaAtual.setCor(Color.RED);
+                menorArestaAtual = null;
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                }
+            }
+
+        }
+        JOptionPane.showMessageDialog(this, "Menor custo total da AGM: " + custoTotal);
+    }
+
+    public void AGM() {
+        this.resetChecked();
+        getVertice(0).setChecked(true);
+        //doAGM();
+        new SwingWorker<Void, Void>() {
+            @Override
+            public Void doInBackground() {
+                doAGM();
+                return null;
+            }
+
+        }.execute();
     }
 
     public void caminhoMinimo(int i, int j) {
 
     }
 
-    public void completarGrafo() {
+    public void recriarPesos() {
+        for (int i = 0; i < this.getN(); i++) {
+            for (int j = 0; j < this.getN(); j++) {
+                Aresta aresta = getAresta(i, j);
+                if (aresta != null && i != j) {
+                    aresta.setPeso(random.nextInt(10));
+                }
+            }
+        }
+    }
 
+    public void completarGrafo() {
         for (int i = 0; i < this.getN(); i++) {
             for (int j = 0; j < this.getN(); j++) {
                 Aresta aresta = getAresta(i, j);
                 if (aresta == null && i != j) {
-                    setAresta(i, j, 1);
+                    setAresta(i, j, this.getPesosAleatorios() ? random.nextInt(10) : 1);
                 }
             }
         }
@@ -76,7 +141,7 @@ public class Grafo extends GrafoBase {
         }
     }
 
-    public void largura(int v) {
+    public void largura(final int v) {
         this.resetChecked();
         new SwingWorker<Void, Void>() {
             @Override
@@ -127,7 +192,7 @@ public class Grafo extends GrafoBase {
         return pares + " }";
     }
 
-    public void profundidade(int v) {
+    public void profundidade(final int v) {
         this.resetChecked();
         new SwingWorker<Void, Void>() {
             @Override

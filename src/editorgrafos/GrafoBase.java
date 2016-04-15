@@ -338,7 +338,7 @@ public abstract class GrafoBase extends JPanel implements MouseListener {
 
     public abstract void largura(int v);
 
-    public abstract void AGM(int v);
+    public abstract void AGM();
 
     public abstract void caminhoMinimo(int i, int j);
 
