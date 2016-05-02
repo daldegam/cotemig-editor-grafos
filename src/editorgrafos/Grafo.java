@@ -84,7 +84,7 @@ public class Grafo extends GrafoBase {
     private int FECHADO = 2;
 
     public void caminhoMinimo(int begin, int end) {
-
+        this.resetChecked();
         int controle[][] = new int[this.getN()][3];
         for (int i = 0; i < this.getN(); i++) {
             controle[i][ANTECESSOR] = 0; //I do antecessor
@@ -144,14 +144,14 @@ public class Grafo extends GrafoBase {
         }
 
         // Monta o caminho mínimo do begin até o end
-        int caminhoAtual = end - 1;
+        int caminhoAtual = end;
         while (caminhoAtual != begin) {
             getAresta(caminhoAtual, controle[caminhoAtual][ANTECESSOR]).setCor(Color.red);
             caminhoAtual = controle[caminhoAtual][ANTECESSOR];
         }
         JOptionPane.showMessageDialog(this, "Caminho mínimo do "
                 + this.getVertice(begin).getRotulo()
-                + " até " + this.getVertice(end - 1).getRotulo() + " é: " + controle[end - 1][ESTIMATIVA]);
+                + " até " + this.getVertice(end).getRotulo() + " é: " + controle[end][ESTIMATIVA]);
     }
 
     public void recriarPesos() {
