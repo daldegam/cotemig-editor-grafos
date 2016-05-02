@@ -1,9 +1,9 @@
 package editorgrafos;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -68,7 +68,6 @@ public class Grafo extends GrafoBase {
     public void AGM() {
         this.resetChecked();
         getVertice(0).setChecked(true);
-        //doAGM();
         new SwingWorker<Void, Void>() {
             @Override
             public Void doInBackground() {
@@ -79,8 +78,80 @@ public class Grafo extends GrafoBase {
         }.execute();
     }
 
-    public void caminhoMinimo(int i, int j) {
+    // Variáveis para auxiliar o caminhoMinimo()
+    private int ANTECESSOR = 0;
+    private int ESTIMATIVA = 1;
+    private int FECHADO = 2;
 
+    public void caminhoMinimo(int begin, int end) {
+
+        int controle[][] = new int[this.getN()][3];
+        for (int i = 0; i < this.getN(); i++) {
+            controle[i][ANTECESSOR] = 0; //I do antecessor
+            controle[i][ESTIMATIVA] = Integer.MAX_VALUE; //Estimativa minima
+            controle[i][FECHADO] = 0; // 0 fechado, 1 aberto
+        }
+
+        controle[begin][ESTIMATIVA] = 0; // Seta a estimativa do primeiro para 0
+        controle[begin][FECHADO] = 1; // Seta o primeiro como fechado
+
+        int i = begin;
+        boolean finish = false;
+        while (finish == false) {
+
+            for (int j = 0; j < this.getN(); j++) {
+                Aresta tmpAresta = this.getAresta(i, j);
+
+                if (tmpAresta != null) {
+
+                    if (controle[i][ESTIMATIVA] + tmpAresta.getPeso() < controle[j][ESTIMATIVA] && controle[j][FECHADO] == 0) {
+                        if (controle[j][ESTIMATIVA] == Integer.MAX_VALUE) {
+                            controle[j][ESTIMATIVA] = 0;
+                        }
+
+                        controle[j][ANTECESSOR] = i;
+                        controle[j][ESTIMATIVA] = controle[i][ESTIMATIVA] + tmpAresta.getPeso();
+                    }
+                }
+            }
+
+            // Informação de debug
+            for (int y = 0; y < this.getN(); y++) {
+                System.out.print(this.getVertice(y).getRotulo() + " "
+                        + (controle[y][ESTIMATIVA] == Integer.MAX_VALUE ? "∞" : controle[y][ESTIMATIVA])
+                        + (controle[y][FECHADO] == 1 ? " T" : " F") + ", ");
+            }
+            System.out.println("");
+
+            // Testa se ainda existem abertos
+            boolean naoTemMaisAbertos = true;
+            for (int k = 0; k < this.getN(); k++) {
+                if (controle[k][FECHADO] == 0) {
+                    naoTemMaisAbertos = false;
+                }
+            }
+            finish = naoTemMaisAbertos;
+
+            // Encontra o proximo que vamos testar (Menor valor de estimativa aberto)
+            int menorEstimativaTmp = Integer.MAX_VALUE;
+            for (int p = 0; p < this.getN(); p++) {
+                if (controle[p][ESTIMATIVA] < menorEstimativaTmp && controle[p][FECHADO] == 0) {
+                    menorEstimativaTmp = controle[p][ESTIMATIVA];
+                    i = p;
+                }
+            }
+            controle[i][FECHADO] = 1;
+        }
+
+        // Monta o caminho mínimo do begin até o end
+        int caminhoAtual = end - 1;
+        while (caminhoAtual != begin) {
+            getAresta(caminhoAtual, controle[caminhoAtual][ANTECESSOR]).setCor(Color.red);
+            caminhoAtual = controle[caminhoAtual][ANTECESSOR];
+        }
+        JOptionPane.showMessageDialog(this, "Caminho mínimo do "
+                + this.getVertice(begin).getRotulo()
+                + " até " + this.getVertice(end - 1).getRotulo() + " é: " + controle[end - 1][ESTIMATIVA]);
     }
 
     public void recriarPesos() {
