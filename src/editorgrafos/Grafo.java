@@ -205,6 +205,8 @@ public class Grafo extends GrafoBase {
             for (int j = 0; j < getN(); j++) {
                 getVertice(i).setChecked(false);
                 getVertice(i).setCor(Color.BLACK);
+                getVertice(i).setCorMarcado(Color.BLACK);
+                getVertice(i).desmarcar();
                 if (getAresta(i, j) != null) {
                     getAresta(i, j).setCor(Color.BLACK);
                 }
@@ -245,7 +247,88 @@ public class Grafo extends GrafoBase {
         }
     }
 
-    public void numeroCromatico() {
+    public void doNumeroCromatico() {
+        int maximoDeCores = 1;
+        Color coresList[] = new Color[8];
+        coresList[0] = Color.PINK;
+        coresList[1] = Color.BLUE;
+        coresList[2] = Color.RED;
+        coresList[3] = Color.YELLOW;
+        coresList[4] = Color.GREEN;
+        coresList[5] = Color.MAGENTA;
+        coresList[6] = Color.CYAN;
+        coresList[7] = Color.WHITE;
+
+        int v = 0; // Vertice de maior grau
+        
+        int maiorGrau = 0;
+        for(int i = 0; i < this.getN(); i++)
+        {
+            int tempGrau = this.grau(i);
+            if(tempGrau > maiorGrau)
+            {
+                maiorGrau = tempGrau;
+                v = i; // Vertice de maior grau
+            }
+        }
+        
+        
+        Fila f = new Fila(getN());
+        f.enfileirar(v);
+        getVertice(v).setChecked(true);
+        getVertice(v).setCor(coresList[0]);
+        int indexTempCor = 1;
+        maximoDeCores++;
+        while (!f.vazia()) {
+            v = f.desenfileirar();
+            for (int i = 0; i < getN(); i++) {
+                if (getAresta(v, i) != null && getVertice(i).isChecked() == false) {
+                    f.enfileirar(i);
+                    getVertice(i).setChecked(true);
+                    
+                    boolean testaCorNovamente = false;
+                    do
+                    {
+                        testaCorNovamente = false;
+                        for(int c = 0; c < this.getN(); c++)
+                        {
+                            if(getAresta(i, c) != null) {
+                                if(getVertice(c).getCor() == coresList[indexTempCor])
+                                {
+                                    testaCorNovamente = true;
+                                    indexTempCor++;
+                                    if(indexTempCor > maximoDeCores)
+                                    {
+                                        maximoDeCores = indexTempCor;
+                                    }
+                                }
+                            }
+                        }
+                    } while(testaCorNovamente);
+                    
+                    getVertice(i).setCor(coresList[indexTempCor]);
+                    
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                    }
+                }
+            }
+            indexTempCor = 0;
+        }
+        JOptionPane.showMessageDialog(this, "Número cromático: " + maximoDeCores);
+    }
+    
+    public void numeroCromatico()
+    {
+        this.resetChecked();
+        new SwingWorker<Void, Void>() {
+            @Override
+            public Void doInBackground() {
+                doNumeroCromatico();
+                return null;
+            }
+        }.execute();
     }
 
     public String paresOrdenados() {
