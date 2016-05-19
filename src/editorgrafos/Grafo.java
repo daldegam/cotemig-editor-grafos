@@ -247,7 +247,7 @@ public class Grafo extends GrafoBase {
         }
     }
 
-    public void doNumeroCromatico() {
+    public void doNumeroCromaticoVertices() {
         int maximoDeCores = 1;
         Color coresList[] = new Color[8];
         coresList[0] = Color.PINK;
@@ -309,15 +309,87 @@ public class Grafo extends GrafoBase {
             }
             indexTempCor = 0;
         }
-        JOptionPane.showMessageDialog(this, "Número cromático: " + maximoDeCores);
+        JOptionPane.showMessageDialog(this, "Número cromático (Vertices): " + maximoDeCores);
     }
 
-    public void numeroCromatico() {
+    public void numeroCromaticoVertices() {
         this.resetChecked();
         new SwingWorker<Void, Void>() {
             @Override
             public Void doInBackground() {
-                doNumeroCromatico();
+                doNumeroCromaticoVertices();
+                return null;
+            }
+        }.execute();
+    }
+
+    public void doNumeroCromaticoArestas() {
+        int maximoDeCores = 1;
+        int indexTempCor = 0;
+
+        Color coresList[] = new Color[8];
+        coresList[0] = Color.PINK;
+        coresList[1] = Color.BLUE;
+        coresList[2] = Color.RED;
+        coresList[3] = Color.GREEN;
+        coresList[4] = Color.YELLOW;
+        coresList[5] = Color.MAGENTA;
+        coresList[6] = Color.CYAN;
+        coresList[7] = Color.WHITE;
+
+        int v = 0; // Vertice de maior grau
+
+        int maiorGrau = 0;
+        for (int i = 0; i < this.getN(); i++) {
+            int tempGrau = this.grau(i);
+            if (tempGrau > maiorGrau) {
+                maiorGrau = tempGrau;
+                v = i; // Vertice de maior grau
+            }
+        }
+
+        Fila f = new Fila(getN());
+        f.enfileirar(v);
+        getVertice(v).setChecked(true);
+        while (!f.vazia()) {
+            v = f.desenfileirar();
+            for (int i = 0; i < getN(); i++) {
+                if (getAresta(v, i) != null && getVertice(i).isChecked() == false) {
+                    f.enfileirar(i);
+                    getVertice(i).setChecked(true);
+
+                    boolean testaCorNovamente = true;
+                    while (testaCorNovamente) {
+                        testaCorNovamente = false;
+                        for (int c = 0; c < this.getN(); c++) {
+                            if (getAresta(v, c) != null && getAresta(v, c).getCor() == coresList[indexTempCor]) {
+                                testaCorNovamente = true;
+                                indexTempCor++;
+                                if (indexTempCor > maximoDeCores) {
+                                    maximoDeCores = indexTempCor;
+                                }
+                            }
+                        }
+                    }
+                    getAresta(v, i).setCor(coresList[indexTempCor]);
+
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException ex) {
+                    }
+                }
+            }
+            indexTempCor = 0;
+        }
+        JOptionPane.showMessageDialog(this, "Número cromático (Arestas): " + maximoDeCores);
+    }
+
+    public void numeroCromaticoArestas() {
+        this.resetChecked();
+        new SwingWorker<Void, Void>() {
+            @Override
+            public Void doInBackground() {
+                doNumeroCromaticoArestas();
                 return null;
             }
         }.execute();

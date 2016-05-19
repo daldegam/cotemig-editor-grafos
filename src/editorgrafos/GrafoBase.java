@@ -356,5 +356,7 @@ public abstract class GrafoBase extends JPanel implements MouseListener {
 
     public abstract void caminhoMinimo(int i, int j);
 
-    public abstract void numeroCromatico();
+    public abstract void numeroCromaticoVertices();
+
+    public abstract void numeroCromaticoArestas();
 }
