@@ -365,8 +365,8 @@ public class Grafo extends GrafoBase {
                             if (getAresta(v, c) != null && getAresta(v, c).getCor() == coresList[indexTempCor]) {
                                 testaCorNovamente = true;
                                 indexTempCor++;
-                                if (indexTempCor > maximoDeCores) {
-                                    maximoDeCores = indexTempCor;
+                                if (indexTempCor >= maximoDeCores) {
+                                    maximoDeCores = indexTempCor + 1;
                                 }
                             }
                         }
