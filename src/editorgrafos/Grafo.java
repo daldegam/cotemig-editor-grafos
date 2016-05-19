@@ -253,26 +253,23 @@ public class Grafo extends GrafoBase {
         coresList[0] = Color.PINK;
         coresList[1] = Color.BLUE;
         coresList[2] = Color.RED;
-        coresList[3] = Color.YELLOW;
-        coresList[4] = Color.GREEN;
+        coresList[3] = Color.GREEN;
+        coresList[4] = Color.YELLOW;
         coresList[5] = Color.MAGENTA;
         coresList[6] = Color.CYAN;
         coresList[7] = Color.WHITE;
 
         int v = 0; // Vertice de maior grau
-        
+
         int maiorGrau = 0;
-        for(int i = 0; i < this.getN(); i++)
-        {
+        for (int i = 0; i < this.getN(); i++) {
             int tempGrau = this.grau(i);
-            if(tempGrau > maiorGrau)
-            {
+            if (tempGrau > maiorGrau) {
                 maiorGrau = tempGrau;
                 v = i; // Vertice de maior grau
             }
         }
-        
-        
+
         Fila f = new Fila(getN());
         f.enfileirar(v);
         getVertice(v).setChecked(true);
@@ -285,29 +282,25 @@ public class Grafo extends GrafoBase {
                 if (getAresta(v, i) != null && getVertice(i).isChecked() == false) {
                     f.enfileirar(i);
                     getVertice(i).setChecked(true);
-                    
-                    boolean testaCorNovamente = false;
-                    do
-                    {
+
+                    boolean testaCorNovamente = true;
+                    while (testaCorNovamente) {
                         testaCorNovamente = false;
-                        for(int c = 0; c < this.getN(); c++)
-                        {
-                            if(getAresta(i, c) != null) {
-                                if(getVertice(c).getCor() == coresList[indexTempCor])
-                                {
+                        for (int c = 0; c < this.getN(); c++) {
+                            if (getAresta(i, c) != null) {
+                                if (getVertice(c).getCor() == coresList[indexTempCor]) {
                                     testaCorNovamente = true;
                                     indexTempCor++;
-                                    if(indexTempCor > maximoDeCores)
-                                    {
+                                    if (indexTempCor > maximoDeCores) {
                                         maximoDeCores = indexTempCor;
                                     }
                                 }
                             }
                         }
-                    } while(testaCorNovamente);
-                    
+                    }
+
                     getVertice(i).setCor(coresList[indexTempCor]);
-                    
+
                     try {
                         Thread.sleep(500);
                     } catch (InterruptedException ex) {
@@ -318,9 +311,8 @@ public class Grafo extends GrafoBase {
         }
         JOptionPane.showMessageDialog(this, "Número cromático: " + maximoDeCores);
     }
-    
-    public void numeroCromatico()
-    {
+
+    public void numeroCromatico() {
         this.resetChecked();
         new SwingWorker<Void, Void>() {
             @Override

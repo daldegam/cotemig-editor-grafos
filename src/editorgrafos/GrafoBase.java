@@ -33,7 +33,7 @@ public abstract class GrafoBase extends JPanel implements MouseListener {
     private LinkedList<Vertice> vertices; // lista de v�rtices
     private Aresta matAdj[][]; // matriz de adjac�ncias
     private Vertice vMarcado;
-    private boolean exibirPesos, pesosAleatorios;
+    private boolean exibirPesos, pesosAleatorios, informarNomes, informarPesos;
 
     public GrafoBase() {
         setLayout(null);
@@ -42,8 +42,18 @@ public abstract class GrafoBase extends JPanel implements MouseListener {
         vMarcado = null;
         matAdj = new Aresta[500][500];
         exibirPesos = false;
+        informarNomes = false;
+        informarPesos = false;
         addMouseListener(this);
         setBackground(Color.WHITE); // cor de fundo
+    }
+
+    public void setInformarNomes(boolean informarNomes) {
+        this.informarNomes = informarNomes;
+    }
+
+    public void setInformarPesos(boolean informarPesos) {
+        this.informarPesos = informarPesos;
     }
 
     public void setExibirPesos(boolean e) {
@@ -173,13 +183,17 @@ public abstract class GrafoBase extends JPanel implements MouseListener {
 
     public boolean adicionouVertice(Vertice v) {
         System.out.println("[DEBUG] => Novo vertice: " + v);
-        //v.setRotulo(JOptionPane.showInputDialog("Digite o r�tulo do v�rtice:"));
+        if (informarNomes) {
+            v.setRotulo(JOptionPane.showInputDialog("Digite o rótulo do vértice:"));
+        }
         return true;
     }
 
     public boolean adicionouAresta(Aresta a) {
         System.out.println("[DEBUG] => Nova aresta");
-        //a.setPeso(Integer.parseInt(JOptionPane.showInputDialog("Digite o peso:")));
+        if (informarPesos) {
+            a.setPeso(Integer.parseInt(JOptionPane.showInputDialog("Digite o peso:")));
+        }
         return true;
     }
 
