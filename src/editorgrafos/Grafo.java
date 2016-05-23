@@ -291,8 +291,8 @@ public class Grafo extends GrafoBase {
                                 if (getVertice(c).getCor() == coresList[indexTempCor]) {
                                     testaCorNovamente = true;
                                     indexTempCor++;
-                                    if (indexTempCor > maximoDeCores) {
-                                        maximoDeCores = indexTempCor;
+                                    if (indexTempCor >= maximoDeCores) {
+                                        maximoDeCores = indexTempCor + 1;
                                     }
                                 }
                             }
@@ -309,7 +309,7 @@ public class Grafo extends GrafoBase {
             }
             indexTempCor = 0;
         }
-        JOptionPane.showMessageDialog(this, "Número cromático (Vertices): " + maximoDeCores);
+        JOptionPane.showMessageDialog(this, "Número cromático (Vertices) - X(G) = " + maximoDeCores);
     }
 
     public void numeroCromaticoVertices() {
@@ -381,7 +381,7 @@ public class Grafo extends GrafoBase {
             }
             indexTempCor = 0;
         }
-        JOptionPane.showMessageDialog(this, "Número cromático (Arestas): " + maximoDeCores);
+        JOptionPane.showMessageDialog(this, "Número cromático (Arestas) - X(G) = " + maximoDeCores);
     }
 
     public void numeroCromaticoArestas() {
