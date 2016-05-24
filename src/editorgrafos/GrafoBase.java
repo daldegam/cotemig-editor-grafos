@@ -97,6 +97,11 @@ public abstract class GrafoBase extends JPanel implements MouseListener {
     public void setAresta(int i, int j, int peso) {
         matAdj[i][j] = matAdj[j][i] = new Aresta(peso, Color.BLACK, this);
     }
+    
+    public void removeAresta(int i, int j) {
+        matAdj[i][j] = matAdj[j][i] = null;
+        repaint();
+    }
 
     public int getN() {
         return n;
@@ -179,6 +184,20 @@ public abstract class GrafoBase extends JPanel implements MouseListener {
             vertices.add(v); // adiciona a lista de v�rtices
             this.add(v);
         }
+    }
+    
+    public void removeVertice(Vertice v)
+    {
+        n--; // vai bugar quando remover um vertice que não for o ultimo, pois é necessário recalcular todos os N e posicionar eles novamente
+        int vNum = v.getNum();
+        for (int i = 0; i < n; i++) {
+            if (matAdj[vNum][i] != null) {
+                this.removeAresta(vNum, i);
+            }
+        }
+        this.remove(v);
+        vertices.remove(v);
+        repaint();
     }
 
     public boolean adicionouVertice(Vertice v) {
